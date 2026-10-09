@@ -1,0 +1,22 @@
+{
+ "ts": 1791539885983,
+ "price": 82660.0,
+ "candles_span": {
+  "first": 1790460000000,
+  "last": null
+ },
+ "accounts": {
+  "双均线": {
+   "eq": 10000.0,
+   "pos": null,
+   "n_trades": 0,
+   "total_pnl": 0
+  },
+  "V31": {
+   "eq": 10000.0,
+   "pos": null,
+   "n_trades": 0,
+   "total_pnl": 0
+  }
+ }
+}
