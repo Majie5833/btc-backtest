@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>模拟盘 · 纸面交易看板</title>
+<style>
+:root{--bg:#0a0f1e;--card:#141c30;--card2:#0d1424;--line:#243050;--txt:#e8edf6;--dim:#8b9bb4;--ok:#34d399;--warn:#fbbf24;--bad:#f87171;--gold:#f5c542;--acc:#60a5fa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(180deg,#0a0f1e,#0c1226);color:var(--txt);font-family:-apple-system,"PingFang SC",sans-serif;padding:0 13px 40px;min-height:100vh}
+header{padding:18px 0 11px;border-bottom:1px solid var(--line);margin-bottom:13px}
+h1{font-size:19px} .sub{font-size:11px;color:var(--dim);margin-top:4px;line-height:1.55}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:11px}
+h2{font-size:13px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.live{font-size:10px;color:var(--ok)}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);margin-right:4px;animation:p 1.5s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.25}}
+.acct{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:9px}
+.acct h3{font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between}
+.acct h3 span{font-size:15px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:7px;font-size:11.5px;margin-top:7px}
+.kv div{color:var(--dim)} .kv b{display:block;font-size:14px;color:var(--txt);font-weight:700;margin-top:1px}
+.pos{background:#0f1a2e;border-left:3px solid var(--acc);border-radius:8px;padding:9px 11px;font-size:12px;margin-top:8px;line-height:1.7}
+.tbl{width:100%;border-collapse:collapse;font-size:11.5px}
+.tbl th,.tbl td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:right}
+.tbl th{color:var(--dim);font-size:10px;font-weight:600}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.phil{font-size:12.5px;line-height:1.85}
+.phil b{color:var(--gold)}
+.note{border-left:3px solid var(--warn);background:#1d180d;padding:10px 12px;border-radius:8px;font-size:12px;margin-top:10px}
+.spin{text-align:center;color:var(--dim);font-size:12px;padding:20px}
+</style></head><body>
+<header>
+<h1>🤖 模拟盘 · 纸面交易看板</h1>
+<div class="sub">双均线(EMA20/50) vs V31 顺大势 —— 同一时间、同一数据、各自 $10,000 虚拟本金<br>
+10 分钟轮询 · 1h K线收盘驱动 · 无真实下单</div>
+</header>
+
+<div class="card">
+<h2>账户实时状态 <span class="live"><span class="dot"></span>LIVE</span></h2>
+<div id="accts"><div class="spin">加载中…</div></div>
+<div style="font-size:11px;color:var(--dim);margin-top:6px" id="meta"></div>
+</div>
+
+<div class="card">
+<h2>📜 成交记录</h2>
+<div id="trades"><div class="spin">暂无成交（等待信号）</div></div>
+</div>
+
+<div class="card">
+<h2>📊 两策略对比</h2>
+<div id="cmp"></div>
+<div class="note">回测里的结论在这里被实时验证：双均线简单但回撤小，V31 信号多但成本高。<b>纸面跑出来的才是真的。</b></div>
+</div>
+
+<div class="card">
+<h2>⚙️ 这个机器人在做什么</h2>
+<div class="phil">
+每 10 分钟拉一次 Bitfinex / Gate.io 的 BTC/USDT 1h K线 → 新 1h bar 收盘时评估信号 → 触发就纸面开仓（1% 风险、2x 上限）→ 止损/反向信号平仓 → 写入看板。<br><br>
+<b>它不下任何真单</b>，没有你的 API 权限，跑的只是两条规则。你可以用它的成绩单决定：这套规则值不值得考虑托管给程序。
+</div>
+</div>
+
+<script>
+const RAW="https://raw.githubusercontent.com/Majie5833/btc-backtest/main/";
+async function tick(){
+  try{
+    const [s, t] = await Promise.all([
+      fetch(RAW+"paper_state.json?cb="+Date.now(), {cache:"no-store"}).then(r=>r.json()),
+      fetch(RAW+"paper_trades.json?cb="+Date.now(), {cache:"no-store"}).then(r=>r.json()).catch(()=>null)
+    ]);
+    render(s); if(t) renderTrades(t);
+  }catch(e){ document.getElementById("meta").textContent="状态读取失败: "+e.message; }
+}
+function render(s){
+  const A=s.accounts||{};
+  const names=Object.keys(A);
+  document.getElementById("accts").innerHTML = names.map(n=>{
+    const a=A[n], pnl=a.eq-10000, pct=pnl/100;
+    const cls=pnl>=0?"ok":"bad";
+    let pos="";
+    if(a.pos){
+      pos=`<div class="pos"><b>${a.pos.dir}单</b> @ ${a.pos.entry} · 止损 ${a.pos.stop} · ${a.pos.units} BTC<br>
+      <span style="color:var(--dim)">${a.pos.tag}</span></div>`;
+    }
+    return `<div class="acct"><h3>${n} <span class="${cls}">$${a.eq.toFixed(2)}</span></h3>
+      <div class="kv">
+        <div>累计盈亏<b class="${cls}">${pnl>=0?"+":""}${pnl.toFixed(2)} (${pct>=0?"+":""}${pct.toFixed(2)}%)</b></div>
+        <div>成交笔数<b>${a.n_trades}</b></div>
+      </div>${pos}</div>`;
+  }).join("") || '<div class="spin">无账户数据</div>';
+  const t=new Date(s.ts);
+  document.getElementById("meta").textContent = "最后更新: "+t.toLocaleString("zh-CN")+" · BTC $"+(s.price||0).toFixed(0);
+  // compare
+  document.getElementById("cmp").innerHTML = `<table class="tbl">
+  <tr><th>策略</th><th>净值</th><th>盈亏</th><th>笔数</th></tr>` +
+  names.map(n=>{const a=A[n],p=a.eq-10000;return `<tr><td>${n}</td><td>$${a.eq.toFixed(2)}</td>
+  <td class="${p>=0?"ok":"bad"}">${p>=0?"+":""}${p.toFixed(2)}</td><td>${a.n_trades}</td></tr>`}).join("")+`</table>`;
+}
+function renderTrades(t){
+  if(!t||!t.length)return;
+  const rows=t.slice(-25).reverse();
+  document.getElementById("trades").innerHTML=`<table class="tbl">
+  <tr><th>时间</th><th>策略</th><th>方向</th><th>入场→出场</th><th>盈亏</th><th>原因</th></tr>`+
+  rows.map(x=>{const d=new Date(x.ts);return `<tr><td>${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}</td>
+  <td>${x.acct||""}</td><td>${x.dir===1?"多":"空"}</td><td>${x.entry.toFixed(0)}→${x.exit.toFixed(0)}</td>
+  <td class="${x.pnl>=0?"ok":"bad"}">${x.pnl>=0?"+":""}${x.pnl.toFixed(2)}</td><td style="font-size:10px;color:var(--dim)">${x.reason||""}</td></tr>`}).join("")+`</table>`;
+}
+tick(); setInterval(tick, 60000);
+</script></body></html>
