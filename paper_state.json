@@ -1,7 +1,7 @@
 {
  "last_bar": 1791597600000,
  "warmed": true,
- "src": "bitfinex",
+ "src": "gate",
  "accounts": {
   "双均线": {
    "eq": 9585.708808338668,
@@ -127,6 +127,9 @@
     "units": 0.14482365978223263,
     "stop": 83185.98038008246,
     "trail": null,
+    "tp1": null,
+    "tp2": null,
+    "halved": false,
     "tag": "V31顺大势空"
    },
    "trades": [
@@ -830,16 +833,16 @@
   },
   "阶梯网格": {
    "eq": 10000.0,
+   "pos": null,
+   "trades": [],
    "cash": 10000.0,
    "btc": 0.0,
    "anchor": 81072,
    "fired": {},
-   "trades": [],
-   "_ts": 1791594000000,
    "_basis": 81072
   }
  },
  "last_bar_4h": 1791590400000,
- "ts": 1791598524655,
- "price": 82702
+ "ts": 1791599438281,
+ "price": 82633.5
 }
