@@ -1,5 +1,5 @@
 {
- "last_bar": 1792508400000,
+ "last_bar": 1792512000000,
  "warmed": true,
  "src": "gate",
  "accounts": {
@@ -1360,7 +1360,7 @@
    "eq": 10000.0,
    "pos": null,
    "trades": [],
-   "_ts": 1792508400000,
+   "_ts": 1792512000000,
    "cash": 10000.0,
    "btc": 0.0,
    "anchor": 81050.0,
@@ -1424,7 +1424,8 @@
    ],
    "loss_streak": 0,
    "risk_factor": 1.0,
-   "pb_warmed": true
+   "pb_warmed": true,
+   "last_d": 166
   },
   "突破RR": {
    "eq": 10000.0,
@@ -1435,7 +1436,7 @@
    "brr_warmed": true
   }
  },
- "last_bar_4h": 1792497600000,
- "ts": 1792511603184,
- "price": 82454.6
+ "last_bar_4h": 1792512000000,
+ "ts": 1792512274204,
+ "price": 82631.9
 }
