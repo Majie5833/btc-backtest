@@ -1,7 +1,7 @@
 {
- "last_bar": 1792497600000,
+ "last_bar": 1792501200000,
  "warmed": true,
- "src": "bitfinex",
+ "src": "gate",
  "accounts": {
   "双均线": {
    "eq": 9246.834801932007,
@@ -1360,15 +1360,41 @@
    "eq": 10000.0,
    "pos": null,
    "trades": [],
-   "_ts": 1792497600000,
+   "_ts": 1792501200000,
    "cash": 10000.0,
    "btc": 0.0,
    "anchor": 81050.0,
    "fired": {},
    "_basis": 81050.0
+  },
+  "MTF趋势": {
+   "eq": 10241.79,
+   "pos": null,
+   "trades": [
+    {
+     "ts": 1786464000000,
+     "dir": 1,
+     "entry": 64405.07844,
+     "exit": 63594.2786,
+     "pnl": -63.99,
+     "reason": "移动/固定止损",
+     "eq": 10241.79
+    }
+   ],
+   "day_pnl": {
+    "2026-08-12": -63.99
+   },
+   "month_pnl": {
+    "2026-08": -63.99
+   },
+   "halt_day": null,
+   "halt_month": null,
+   "loss_streak": 1,
+   "risk_factor": 1.0,
+   "mtf_warmed": true
   }
  },
  "last_bar_4h": 1792497600000,
- "ts": 1792500309563,
- "price": 81684
+ "ts": 1792501502777,
+ "price": 81465.9
 }
