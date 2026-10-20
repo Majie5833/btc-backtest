@@ -1425,9 +1425,17 @@
    "loss_streak": 0,
    "risk_factor": 1.0,
    "pb_warmed": true
+  },
+  "突破RR": {
+   "eq": 10000.0,
+   "pos": null,
+   "trades": [],
+   "loss_streak": 0,
+   "risk_factor": 1.0,
+   "brr_warmed": true
   }
  },
  "last_bar_4h": 1792497600000,
- "ts": 1792505303962,
- "price": 82596.8
+ "ts": 1792505459269,
+ "price": 82956.5
 }
