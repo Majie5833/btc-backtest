@@ -83,7 +83,7 @@ function render(s){
       pos=`<div class="pos"><b>${a.pos.dir}单</b> @ ${a.pos.entry} · 止损 ${a.pos.stop} · ${a.pos.units} BTC<br>
       <span style="color:var(--dim)">${a.pos.tag}</span></div>`;
     }
-    return `<div class="acct"><h3>${n} <span class="${cls}">$${a.eq.toFixed(2)}</span></h3>
+    return `<div class="acct"><h3>${n}${a.observe_only ? " ⚠️观察" : ""} <span class="${cls}">$${a.eq.toFixed(2)}</span></h3>
       <div class="kv">
         <div>累计盈亏<b class="${cls}">${pnl>=0?"+":""}${pnl.toFixed(2)} (${pct>=0?"+":""}${pct.toFixed(2)}%)</b></div>
         <div>成交笔数<b>${a.n_trades}</b></div>
